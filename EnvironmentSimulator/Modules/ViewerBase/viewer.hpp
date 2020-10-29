@@ -134,8 +134,6 @@ namespace viewer
 			color_[2] = color[2];
 		}
 
-		~Trail(){delete[] dot_;};
-
 	private:
 		osg::Vec4 color_;
 		osgViewer::Viewer *viewer_;
