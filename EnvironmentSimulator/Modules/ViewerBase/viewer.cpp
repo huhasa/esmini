@@ -148,6 +148,7 @@ SensorViewFrustum::SensorViewFrustum(ObjectSensor *sensor, osg::Group *parent)
 		Line *line = new Line(0, 0, 0, 1, 0, 0, 0.8, 0.8, 0.8);
 		line_group_->addChild(line->line_);
 		lines_.push_back(line);
+		delete line;
 	}
 
 	txNode_->addChild(line_group_);
@@ -263,7 +264,7 @@ SensorViewFrustum::SensorViewFrustum(ObjectSensor *sensor, osg::Group *parent)
 	stateset->setAttributeAndModes(cull, osg::StateAttribute::ON);
 
 	// Draw only wireframe to 
-	osg::PolygonMode* polygonMode = new osg::PolygonMode;
+	osg::ref_ptr<osg::PolygonMode> polygonMode = new osg::PolygonMode;
 	polygonMode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
 	stateset->setAttributeAndModes(polygonMode, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
@@ -570,6 +571,7 @@ CarModel::CarModel(osgViewer::Viewer *viewer, osg::ref_ptr<osg::LOD> lod, osg::r
 CarModel::~CarModel()
 {
 	wheel_.clear();
+	delete trail_;
 }
 
 void CarModel::SetPosition(double x, double y, double z)
@@ -1240,6 +1242,8 @@ bool Viewer::CreateRoadMarkLines(roadmanager::OpenDrive* od)
 		}
 	}
 
+	delete pos;
+
 	return true;
 }
 
@@ -1363,6 +1367,8 @@ bool Viewer::CreateRoadLines(roadmanager::OpenDrive* od)
 		}
 	}
 
+	delete pos;
+
 	return true;
 }
 
@@ -1389,7 +1395,7 @@ PointSensor* Viewer::CreateSensor(double color[], bool create_ball, bool create_
 		sensor->ball_->addChild(geode);
 		roadSensors_->addChild(sensor->ball_);
 
-		osg::Material *material = new osg::Material();
+		osg::ref_ptr<osg::Material> material = new osg::Material();
 		material->setDiffuse(osg::Material::FRONT, osg::Vec4(color[0], color[1], color[2], 1.0));
 		material->setAmbient(osg::Material::FRONT, osg::Vec4(color[0], color[1], color[2], 1.0));
 		sensor->ball_->getOrCreateStateSet()->setAttribute(material);
