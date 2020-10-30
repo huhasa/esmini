@@ -66,7 +66,7 @@ namespace viewer
 		ObjectSensor *sensor_;
 
 		SensorViewFrustum(ObjectSensor *sensor, osg::Group *parent);
-		~SensorViewFrustum() { lines_.clear(); }
+		~SensorViewFrustum();
 		void Update();
 	};
 
@@ -133,6 +133,7 @@ namespace viewer
 			color_[1] = color[1];
 			color_[2] = color[2];
 		}
+		~Trail();
 
 	private:
 		osg::Vec4 color_;

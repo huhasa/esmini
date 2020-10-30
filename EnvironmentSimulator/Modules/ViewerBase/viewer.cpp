@@ -148,7 +148,6 @@ SensorViewFrustum::SensorViewFrustum(ObjectSensor *sensor, osg::Group *parent)
 		Line *line = new Line(0, 0, 0, 1, 0, 0, 0.8, 0.8, 0.8);
 		line_group_->addChild(line->line_);
 		lines_.push_back(line);
-		delete line;
 	}
 
 	txNode_->addChild(line_group_);
@@ -278,6 +277,15 @@ SensorViewFrustum::SensorViewFrustum(ObjectSensor *sensor, osg::Group *parent)
 	txNode_->addChild(geode2);
 	txNode_->setPosition(osg::Vec3(sensor_->pos_.x, sensor_->pos_.y, sensor_->pos_.z));
 	txNode_->setAttitude(osg::Quat(sensor_->pos_.h, osg::Vec3(0, 0, 1)));
+}
+
+SensorViewFrustum::~SensorViewFrustum()
+{
+	for (size_t i = 0; i < lines_.size(); i++)
+	{
+		delete lines_[i];
+	}
+	lines_.clear();
 }
 
 void SensorViewFrustum::Update()
@@ -459,6 +467,14 @@ void Trail::AddDot(float time, double x, double y, double z, double heading)
 	if (++current_ >= TRAIL_MAX_DOTS)
 	{
 		current_ = 0;
+	}
+}
+
+Trail::~Trail()
+{
+	for (size_t i = 0; i < n_dots_; i++)
+	{
+		delete (dot_[i]);
 	}
 }
 
@@ -1112,7 +1128,6 @@ osg::ref_ptr<osg::LOD> Viewer::LoadCarModel(const char *filename)
 bool Viewer::CreateRoadMarkLines(roadmanager::OpenDrive* od)
 {
 	double z_offset = 0.10;
-	roadmanager::Position* pos = new roadmanager::Position();
 	osg::Vec3 point(0, 0, 0);
 
 	for (int r = 0; r < od->GetNumOfRoads(); r++)
@@ -1241,8 +1256,6 @@ bool Viewer::CreateRoadMarkLines(roadmanager::OpenDrive* od)
 			}
 		}
 	}
-
-	delete pos;
 
 	return true;
 }
